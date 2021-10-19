@@ -12,6 +12,7 @@ int launch_count;
 string mt;
 string lc;
 string data_cap;
+string name;
 int I = 0;
 double wtime()
 {
@@ -31,8 +32,9 @@ void run_ssd(int count)
 {
     int numb = count / 8;
     int* array = new int[numb];
-    for (int i = 0; i < numb; i++)
+    for (int i = 0; i < numb; i++) {
         array[i] = rand();
+    }
     ofstream write;
     ifstream read;
     double* t = new double[launch_count];
@@ -41,8 +43,9 @@ void run_ssd(int count)
     for (int j = 0; j < launch_count; j++) {
         write.open("file.txt");
         t[j] = wtime();
-        for (int i; i < count / 8; i++)
+        for (int i = 0; i < numb; i++) {
             write << array[i];
+        }
         t[j] = wtime() - t[j];
         write.close();
         cout << t[j] << '\n';
@@ -122,7 +125,7 @@ void run_flush(int count)
     for (int j = 0; j < launch_count; j++) {
         write.open("file.txt");
         t[j] = wtime();
-        for (int i; i < count / 8; i++)
+        for (int i = 0; i < numb; i++)
             write << array[i];
         t[j] = wtime() - t[j];
         write.close();
@@ -189,9 +192,13 @@ int main(int argc, char** argv)
             run_ssd(Mbtob(4 + I * 4));
         }
     else if (mt == "RAM_CACHE") {
+        I = 0;
         run_ram(64);
+        I = 1;
         run_ram(Kbtob(128));
+        I = 2;
         run_ram(Kbtob(512));
+        I = 3;
         run_ram(Mbtob(3));
     } else if (mt == "flush_MB") {
         for (I = 0; I < 20; I++) {
@@ -199,8 +206,10 @@ int main(int argc, char** argv)
         }
     } else if (mt == "SSD_CL") {
         for (; launch_count < 30; launch_count += 5) {
+            I = launch_count;
             run_ssd(Mbtob(1));
         }
     }
+    result.close();
     return 0;
 }
